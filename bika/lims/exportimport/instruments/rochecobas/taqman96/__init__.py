@@ -73,7 +73,7 @@ class RocheCobaTaqman96CSVParser(InstrumentCSVResultsFileParser):
 		self.addRawResult(resid,{testname : list},False)
 		return 0
 
-def csvDate2BikaDate(self, DateTime):
+	def csvDate2BikaDate(self, DateTime):
 	"""
 	standard method for Bika !
 	"""
@@ -81,3 +81,13 @@ def csvDate2BikaDate(self, DateTime):
         Date, Time = DateTime.split(' ')
         dtobj = datetime.strptime(Date + ' ' + Time, "%Y/%m/%d %H:%M:%S")
         return dtobj.strftime("%Y%m%d %H:%M:%S")
+
+class RocheCobasTaqman96Importer(AnalysisResultsImporter):
+    def __init__(self, parser, context, idsearchcriteria, override,
+                 allowed_ar_states=None, allowed_analysis_states=None,
+                 instrument_uid=None):
+        AnalysisResultsImporter.__init__(self, parser, context,
+                                         idsearchcriteria, override,
+                                         allowed_ar_states,
+                                         allowed_analysis_states,
+                                         instrument_uid)
