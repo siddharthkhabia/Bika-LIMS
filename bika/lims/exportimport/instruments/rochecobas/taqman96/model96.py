@@ -2,7 +2,7 @@
 """
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
-from . import RocheCobasTaqman96CSVParser, RocheCobasTaqmanImporter
+from . import RocheCobasTaqman96CSVParser, RocheCobasTaqman96Importer
 import json
 import traceback
 
@@ -23,7 +23,7 @@ def Import(context, request):
     if not hasattr(infile, 'filename'):
         errors.append(_("No file selected"))
     if fileformat == 'csv':
-        parser = RocheCobasTaqmanCSVParser(infile)
+        parser = RocheCobasTaqman96CSVParser(infile)
     else:
         errors.append(t(_("Unrecognized file format ${fileformat}",
                           mapping={"fileformat": fileformat})))
@@ -75,7 +75,7 @@ def Import(context, request):
 
     return json.dumps(results)
 
-class BeckmancoulterAccess2CSVParser(RocheCobasTaqmanCSVParser):
+class BeckmancoulterAccess2CSVParser(RocheCobasTaqman96CSVParser):
     def getAttachmentFileType(self):
         return "Roche Cobas Taqman 96"
 

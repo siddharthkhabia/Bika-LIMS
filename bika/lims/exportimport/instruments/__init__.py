@@ -17,6 +17,7 @@ from tescan.tima import tima
 from sysmex.xs import i500, i1000
 from beckmancoulter.access import model2
 from rochecobas.taqman import model48
+from rochecobas.taqman96 import model96
 from sealanalytical.aq2 import aq2
 from horiba.jobinyvon import icp
 from abaxis.vetscan import vs2

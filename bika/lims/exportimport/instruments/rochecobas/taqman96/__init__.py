@@ -5,8 +5,8 @@ from datetime import datetime
 from bika.lims.exportimport.instruments.resultsimport import \
     AnalysisResultsImporter, InstrumentCSVResultsFileParser
 
-class RocheCobaTaqman96CSVParser(InstrumentCSVResultsFileParser):
-	"""docstring for RocheCobaTaqman96CSVParser"""
+class RocheCobasTaqman96CSVParser(InstrumentCSVResultsFileParser):
+	"""docstring for RocheCobasTaqman96CSVParser"""
 	def __init__(self , csv):
 		InstrumentCSVResultsFileParser.__init__(self,csv)
 		self.columns = []
@@ -30,24 +30,24 @@ class RocheCobaTaqman96CSVParser(InstrumentCSVResultsFileParser):
 			entries like "10,000" in csv as pointed 
 			out by rockfruit .
 		"""
-	count_inv = 0
-	cline = ""
-	for i in range(len(line)) :
-		if line[i] == '"':
-			count_inv = count_inv+1
-		if line[i] == ",":
-			if count_inv%2==1:
-				cline = cline + "~/*"
+		count_inv = 0
+		cline = ""
+		for i in range(len(line)) :
+			if line[i] == '"':
+				count_inv = count_inv+1
+			if line[i] == ",":
+				if count_inv%2==1:
+					cline = cline + "~/*"
+				else:
+					cline = cline + ","
 			else:
-				cline = cline + ","
-		else:
-			cline = cline + line[i]
-	nline=cline.replace('"','').split(",")
-	fline = []
-	for word in nline :
-		word=word.replace("~/*",",")
-		fline.append(word)
-	return fline
+				cline = cline + line[i]
+		nline=cline.replace('"','').split(",")
+		fline = []
+		for word in nline :
+			word=word.replace("~/*",",")
+			fline.append(word)
+		return fline
 
 	def parse_val_line(self , line_list):
 		if len(line_list) != len(self.columns):
@@ -74,20 +74,17 @@ class RocheCobaTaqman96CSVParser(InstrumentCSVResultsFileParser):
 		return 0
 
 	def csvDate2BikaDate(self, DateTime):
-	"""
-	standard method for Bika !
-	"""
-        # example: 11/03/2014 14:46:46 --> %d/%m/%Y %H:%M %p
-        Date, Time = DateTime.split(' ')
-        dtobj = datetime.strptime(Date + ' ' + Time, "%Y/%m/%d %H:%M:%S")
-        return dtobj.strftime("%Y%m%d %H:%M:%S")
+			# example: 11/03/2014 14:46:46 --> %d/%m/%Y %H:%M %p
+	        Date, Time = DateTime.split(' ')
+	        dtobj = datetime.strptime(Date + ' ' + Time, "%Y/%m/%d %H:%M:%S")
+	        return dtobj.strftime("%Y%m%d %H:%M:%S")
 
 class RocheCobasTaqman96Importer(AnalysisResultsImporter):
     def __init__(self, parser, context, idsearchcriteria, override,
                  allowed_ar_states=None, allowed_analysis_states=None,
                  instrument_uid=None):
         AnalysisResultsImporter.__init__(self, parser, context,
-                                         idsearchcriteria, override,
-                                         allowed_ar_states,
-                                         allowed_analysis_states,
-                                         instrument_uid)
+                                    idsearchcriteria, override,
+                                    allowed_ar_states,
+                                    allowed_analysis_states,
+                                    instrument_uid)
