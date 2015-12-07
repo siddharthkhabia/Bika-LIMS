@@ -9,6 +9,7 @@ from bika.lims.utils import tmpID
 from Products.Archetypes.config import REFERENCE_CATALOG
 from datetime import datetime
 from DateTime import DateTime
+from openpyxl import load_workbook
 import os
 
 class InstrumentResultsFileParser(Logger):
@@ -182,7 +183,6 @@ class InstrumentResultsFileParser(Logger):
             self.err("No results found")
             return False
         return True
-
 
 class InstrumentCSVResultsFileParser(InstrumentResultsFileParser):
 
