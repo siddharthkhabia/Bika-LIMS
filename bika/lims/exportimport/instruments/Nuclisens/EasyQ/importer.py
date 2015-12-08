@@ -4,6 +4,8 @@ from . import EasyQXLSXParser, EasyQImporter
 import json
 import traceback
 
+title = "Nuclisens EasyQ"
+
 
 def Import(context, request):
     infile = request.form['EasyQ_file']
