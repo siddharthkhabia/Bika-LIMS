@@ -1,4 +1,4 @@
- *** Settings ***
+*** Settings ***
 
 Library         BuiltIn
 Library         Selenium2Library  timeout=5  implicit_wait=0.2
@@ -15,27 +15,32 @@ Suite Teardown  Close All Browsers
 Library          DebugLibrary
 
 *** Variables ***
-${ASId} =  Ni
-${ASTitle} =  Ni
-${ClientSampleId} =  QC 350 PPM
 
 *** Test Cases ***
 
 
-Test import Horiba Jobin Yvon ICP csv
+Test Nuclisens EasyQ XLSX importer
     Enable autologin as  LabManager
     set autologin username  test_labmanager
     ${PATH_TO_TEST} =  run keyword  resource_filename
-    ${cat_uid} =  Get UID  catalog_name=bika_setup_catalog  portal_type=AnalysisCategory  title=Metals
-    ${service_uid} =  Create Object   bika_setup/bika_analysisservices  AnalysisService  s1  title=AL396152  Keyword=Al396152  Category=${cat_uid}
-    ${st_uid} =  Get UID  catalog_name=bika_setup_catalog  portal_type=SampleType  title=Bran
-    ${sp_uid} =  Get UID  catalog_name=bika_setup_catalog  portal_type=SamplePoint  title=Mill
-    ${ar_uid} =  Create AR  /clients/client-1  analyses=${service_uid}  SampleType=${st_uid}  SamplePoint=${sp_uid}
+    # We need a category so that we can create AnalysisServices.
+    ${cat_uid} =  Get UID  catalog_name=bika_setup_catalog  portal_type=AnalysisCategory  title=Viral
+    # We're only going to test the HIV service from the XLSX, because that's all that our sample file contains
+    ${service_uid} =  Create Object   bika_setup/bika_analysisservices  AnalysisService  s1  title=EasyQ HIV Service  Keyword=EQHIV  Category=${cat_uid}
+    # Let's make a Plasma sample type
+    ${st_uid} =  Create Object   bika_setup/bika_sampletypes  SampleType  ST1  title=Plasma
+    # And then create a new AR with just the one AnalysisService.
+    # We'll set the ClientSampleID to match the first valid result in the XLSX.
+    ${ar_uid} =  Create AR  /clients/client-1  analyses=${service_uid}  SampleType=${st_uid}   ClientSampleID=HRE043
+    # The AR and Sample must be received before any results can be added to it.
     do action for  ${ar_uid}  receive
     # import file
-    Import Instrument File     Horiba Jobin-Yvon - ICP  ${PATH_TO_TEST}/files/ICPlimstest.csv
-    page should contain        Service keyword Ni221647 not found
+    Import Instrument File       ${PATH_TO_TEST}/files/NuclisensEasyQViralLoadExportFile.xlsx
+    # In the debug statement below, the browser pauses, and we can discover conditions to test for.
+    debug
+    # Only one AR and one result should have been imported!
     page should contain        Import finished successfully: 1 ARs and 1 results updated
+    # And we must verify that the result is "710" (the 'cps/ml' part has been removed).
     go to    ${PLONEURL}/clients/client-1/BR-0001-R01/manage_results
     textfield value should be        css=[selector="Result_Al396152"]  0.1337
 
@@ -45,21 +50,6 @@ Start browser
     Open browser                        ${PLONEURL}  chrome
     Set selenium speed                  ${SELENIUM_SPEED}
 
-Create Analysis Service
-   [Documentation]  Create an AS using the ID ASId
-   [Arguments]  ${ASId}
-   ...          ${ASTitle1}
-    Go to                       ${PLONEURL}/bika_setup/bika_analysisservices
-    Wait until page contains element    css=h1
-    Click link                  link=Add
-    Wait until page contains element  title
-    Input text                  title  ${ASTitle1}
-    Input text                  ShortTitle  ${ASId}
-    Input text                  Keyword  ${ASId}
-    Select from dropdown        Category  Microbiology
-    Click button                Save
-    Wait until page contains    Changes saved.
-
 Import Instrument File
     [Documentation]  Select the instrument and file type.
     ...              Then import the file created by the instrument.
@@ -68,13 +58,8 @@ Import Instrument File
     Click Link                  Import
     Wait until page contains    Select a data interface
     Select from list            exim  ${instrument}
-    Element Should Contain      format  CSV
-    Import AR Results Instrument File    ${file}  data_file
-
-Import AR Results Instrument File
-    [Documentation]  Import the file from test files folder, and submit it.
-    [arguments]                 ${file}
-    ...                         ${input_identifier}
-    Choose File                 ${input_identifier}  ${file}
+    # This instrument supports only XLSX!
+    Element Should Contain      EasyQ_format  XLSX
+    Choose File                 EasyQ_file    ${file}
     Click Button                Submit
     Wait until page contains    Log trace
