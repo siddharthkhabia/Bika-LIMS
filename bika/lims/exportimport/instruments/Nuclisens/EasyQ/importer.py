@@ -6,13 +6,11 @@ import traceback
 
 
 def Import(context, request):
-    
     infile = request.form['EasyQ_file']
     fileformat = request.form['EasyQ_format']
     artoapply = request.form['EasyQ_artoapply']
     override = request.form['EasyQ_override']
-    sample = request.form.get('EasyQ_sample',
-                              'requestid')
+    sample = request.form.get('EasyQ_sample', 'requestid')
     instrument = request.form.get('EasyQ_instrument', None)
     errors = []
     logs = []
@@ -55,12 +53,12 @@ def Import(context, request):
             sam = ['getSampleID', 'getClientSampleID']
 
         importer = NuclisensEasyQImporter(parser=parser,
-                                              context=context,
-                                              idsearchcriteria=sam,
-                                              allowed_ar_states=status,
-                                              allowed_analysis_states=None,
-                                              override=over,
-                                              instrument_uid=instrument)
+                                          context=context,
+                                          idsearchcriteria=sam,
+                                          allowed_ar_states=status,
+                                          allowed_analysis_states=None,
+                                          override=over,
+                                          instrument_uid=instrument)
         tbex = ''
         try:
             importer.process()
@@ -75,6 +73,7 @@ def Import(context, request):
     results = {'errors': errors, 'log': logs, 'warns': warns}
 
     return json.dumps(results)
+
 
 class NuclisensEasyQImporter(EasyQImporter):
     def getKeywordsToBeExcluded(self):
