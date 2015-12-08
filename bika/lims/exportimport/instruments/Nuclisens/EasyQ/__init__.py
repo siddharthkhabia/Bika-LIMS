@@ -15,10 +15,10 @@ class EasyQXLSXParser(InstrumentXLSXResultsFileParser):
       self.head_done =True
       return 0
     elif len(row_list)==len(columns) and self.head_done :
-       """
-       if we already have the headers and the list has
-       the correct no of elements then parse it
-       """
+      """
+      if we already have the headers and the list has
+      the correct no of elements then parse it
+      """
       rawdict= {}
       for i ,red in enumerate (row_list):
         rawdict[self.columns[i]] =red
