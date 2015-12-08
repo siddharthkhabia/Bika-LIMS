@@ -27,6 +27,13 @@ class EasyQXLSXParser(InstrumentXLSXResultsFileParser):
             # default result added as the AU block of the file as
             # suggested by lemoene
             rawdict['DefaulResult'] = 'Value'
+
+            # We should remove any unit from the result; these are already
+            # completed as part of the AnalysisService configuration.
+            if rawdict['Value'].find('/') > -1:
+                parts = rawdict['Value'].split()
+                rawdict['Value'] = ' '.join(parts[:-1])
+
             self.resid = rawdict['SampleID']
             if self.resid == '':
                 self.resid = rawdict['SerialNumber']
