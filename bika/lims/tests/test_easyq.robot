@@ -24,11 +24,11 @@ Test Nuclisens EasyQ XLSX importer
     set autologin username  test_labmanager
     ${PATH_TO_TEST} =  run keyword  resource_filename
     # We need a category so that we can create AnalysisServices.
-    ${cat_uid} =  Get UID  catalog_name=bika_setup_catalog  portal_type=AnalysisCategory  title=Viral
+    ${cat_uid} =  Create Object    bika_setup/bika_analysiscategories  AnalysisCategory  c1  title=Viral
     # We're only going to test the HIV service from the XLSX, because that's all that our sample file contains
     ${service_uid} =  Create Object   bika_setup/bika_analysisservices  AnalysisService  s1  title=EasyQ HIV Service  Keyword=EQHIV  Category=${cat_uid}
     # Let's make a Plasma sample type
-    ${st_uid} =  Create Object   bika_setup/bika_sampletypes  SampleType  ST1  title=Plasma
+    ${st_uid} =  Create Object   bika_setup/bika_sampletypes  SampleType  ST1  title=Plasma   Prefix=PL
     # And then create a new AR with just the one AnalysisService.
     # We'll set the ClientSampleID to match the first valid result in the XLSX.
     ${ar_uid} =  Create AR  /clients/client-1  analyses=${service_uid}  SampleType=${st_uid}   ClientSampleID=HRE043
