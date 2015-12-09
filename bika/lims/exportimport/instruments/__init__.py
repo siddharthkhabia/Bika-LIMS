@@ -23,7 +23,7 @@ from abaxis.vetscan import vs2
 from scilvet.abc import plus
 from eltra.cs import cs2000
 from rigaku.supermini import wxrf
-from Nuclisens.EasyQ import importer
+from nuclisens.easyq import easyq
 
 __all__ = ['abaxis.vetscan.vs2',
            'agilent.masshunter.quantitative',
