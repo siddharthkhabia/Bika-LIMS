@@ -10,7 +10,9 @@ from Products.Archetypes.config import REFERENCE_CATALOG
 from datetime import datetime
 from DateTime import DateTime
 from openpyxl import load_workbook
+
 import os
+import tempfile
 
 class InstrumentResultsFileParser(Logger):
 
@@ -192,36 +194,42 @@ class InstrumentXLSXResultsFileParser(InstrumentResultsFileParser):
     def parse(self):
         infile = self.getInputFile()
         self.log("Parsing file ${file_name}", mapping={"file_name":infile.filename})
-        jump = 0
-        # We test in import functions if the file was uploaded
-        W = load_workbook(filename = path , read_only = True)
-        k = W.get_sheet_names()
-        k=k[0] 
-        p = W[k]
+        # Save the file data to a temp file, for openpyxl to read
+        tmp_fn = tempfile.mktemp(suffix=".xlsx")
+        open(tmp_fn, "wb").write(infile.read())
+        try:
+            # We test in import functions if the file was uploaded
+            W = load_workbook(filename = tmp_fn)
+            # We're just going to grab the first sheet here...
+            first_sheet_name = W.get_sheet_names()[0]
+            p = W.get_sheet_by_name(first_sheet_name)
 
-        for row in p.rows :
-            if jump == -1 :
-                self.err("File processing finished due to critical errors")
-                return False
-            if jump > 0 :
-                jump -= 1
-                continue
-            if jump == 0 :
-                row_list=[]
-                for cell in row:
-                    if cell.value==None:
-                        row_list.append("")
-                    else:
-                        row_list.append(cell.value)
-                jump = self._parse_row(row_list)
+            jump = 0
+            for row in p.rows :
+                if jump == -1 :
+                    self.err("File processing finished due to critical errors")
+                    return False
+                if jump > 0 :
+                    jump -= 1
+                    continue
+                if jump == 0 :
+                    row_list=[]
+                    for cell in row:
+                        if cell.value==None:
+                            row_list.append("")
+                        else:
+                            row_list.append(cell.value)
+                    jump = self._parse_row(row_list)
 
-        self.log(
-            "End of file reached successfully: ${total_objects} objects, "
-            "${total_analyses} analyses, ${total_results} results",
-            mapping={"total_objects": self.getObjectsTotalCount(),
-                     "total_analyses": self.getAnalysesTotalCount(),
-                     "total_results":self.getResultsTotalCount()}
-        )
+            self.log(
+                "End of file reached successfully: ${total_objects} objects, "
+                "${total_analyses} analyses, ${total_results} results",
+                mapping={"total_objects": self.getObjectsTotalCount(),
+                         "total_analyses": self.getAnalysesTotalCount(),
+                         "total_results":self.getResultsTotalCount()}
+            )
+        finally:
+            os.unlink(tmp_fn)
         return True
 
     def _parse_row(self, row_list):
