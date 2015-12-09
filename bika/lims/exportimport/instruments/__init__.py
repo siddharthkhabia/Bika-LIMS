@@ -49,7 +49,7 @@ __all__ = ['abaxis.vetscan.vs2',
            'sealanalytical.aq2.aq2',
            'tescan.tima.tima',
            'thermoscientific.multiskan.go',
-           'Nuclisens.EasyQ.importer',
+           'nuclisens.easyq.easyq',
            ]
 
 
