@@ -35,7 +35,7 @@ Test Nuclisens EasyQ XLSX importer
     # The AR and Sample must be received before any results can be added to it.
     do action for  ${ar_uid}  receive
     # import file
-    Import Instrument File       ${PATH_TO_TEST}/files/NuclisensEasyQViralLoadExportFile.xlsx
+    Import Instrument File      Nuclisens EasyQ   ${PATH_TO_TEST}/files/NuclisensEasyQViralLoadExportFile.xlsx
     # In the debug statement below, the browser pauses, and we can discover conditions to test for.
     debug
     # Only one AR and one result should have been imported!
