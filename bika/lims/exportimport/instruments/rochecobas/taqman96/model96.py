@@ -2,7 +2,8 @@
 """
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
-from . import RocheCobasTaqman96CSVParser, RocheCobasTaqman96Importer
+from parser import RocheCobasTaqman96CSVParser
+from importer import RocheCobasTaqman96Importer
 import json
 import traceback
 
