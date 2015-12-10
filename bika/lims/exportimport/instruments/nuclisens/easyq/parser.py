@@ -20,10 +20,18 @@ class EasyQXLSXParser(InstrumentXLSXResultsFileParser):
         # if we already have the headers and the list has
         # the correct no of elements then parse it
         elif len(row_list) == len(self.columns) and self.head_done:
+            
             rawdict = {}
             for i, red in enumerate(row_list):
                 rawdict[self.columns[i]] = red
-
+            
+            if row_list['Severity']== 'Info':
+                #if the severity is "Info" the line does not contain actual result
+                return 0
+            testname = row_list['Description']
+            if testname=="":
+                self.err("test not specified ")
+                return -1
             # default result added as the AU block of the file as
             # suggested by lemoene
             rawdict['DefaulResult'] = 'Value'
