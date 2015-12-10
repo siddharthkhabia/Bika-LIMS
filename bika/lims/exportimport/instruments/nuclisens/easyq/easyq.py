@@ -1,4 +1,4 @@
-from bika.lims import bikaMessageFactory as _
+from bika.lims import bikaMessageFactory as _, logger
 from bika.lims.utils import t
 from parser import EasyQXLSXParser
 from importer import EasyQImporter
@@ -67,6 +67,7 @@ def Import(context, request):
             importer.process()
         except:
             tbex = traceback.format_exc()
+            logger.error(tbex)
         errors = importer.errors
         logs = importer.logs
         warns = importer.warns
